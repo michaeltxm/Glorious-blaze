@@ -1,0 +1,2185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🔥 Glorious Blaze - Educational Adventure</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+
+:root {
+  --flame-orange: #FF6B35;
+  --flame-yellow: #FFD700;
+  --sky-blue: #87CEEB;
+  --grass-green: #4CAF50;
+  --treasure-gold: #FFB347;
+  --gem-purple: #9B59B6;
+  --gem-blue: #3498DB;
+  --gem-red: #E74C3C;
+  --dark-bg: #1a1a2e;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  overflow: hidden;
+  background: var(--dark-bg);
+  height: 100vh;
+  width: 100vw;
+}
+
+h1, h2, h3 { font-family: 'Fredoka One', cursive; }
+
+.screen {
+  position: fixed;
+  inset: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  transition: opacity 0.5s;
+}
+.screen.active { display: flex; }
+
+.auth-bg {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(2px 2px at 20% 30%, #fff 100%, transparent),
+    radial-gradient(2px 2px at 40% 70%, #fff 100%, transparent),
+    radial-gradient(1px 1px at 60% 20%, #fff 100%, transparent),
+    radial-gradient(2px 2px at 80% 50%, #fff 100%, transparent),
+    radial-gradient(1px 1px at 10% 80%, #fff 100%, transparent),
+    radial-gradient(1px 1px at 70% 90%, #fff 100%, transparent),
+    radial-gradient(2px 2px at 50% 10%, #fff 100%, transparent),
+    radial-gradient(1px 1px at 90% 40%, #fff 100%, transparent);
+  animation: twinkle 3s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.auth-card {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 24px;
+  padding: 40px;
+  width: 420px;
+  max-width: 90vw;
+  z-index: 10;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.auth-card h1 {
+  color: var(--flame-yellow);
+  font-size: 2.2rem;
+  text-align: center;
+  margin-bottom: 8px;
+  text-shadow: 0 0 20px rgba(255,215,0,0.5);
+}
+
+.auth-card .subtitle {
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 0.95rem;
+}
+
+.form-group { margin-bottom: 20px; }
+
+.form-group label {
+  display: block;
+  color: rgba(255,255,255,0.8);
+  font-weight: 700;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  font-size: 1rem;
+  font-family: 'Nunito', sans-serif;
+  transition: all 0.3s;
+  outline: none;
+}
+
+.form-group input:focus {
+  border-color: var(--flame-orange);
+  background: rgba(255,255,255,0.1);
+  box-shadow: 0 0 20px rgba(255,107,53,0.2);
+}
+
+.btn-blaze {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.15rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--flame-orange), #ff8c42);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(255,107,53,0.4);
+  margin-top: 10px;
+}
+
+.btn-blaze:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(255,107,53,0.6);
+}
+
+.btn-blaze:active { transform: translateY(0); }
+
+.auth-link {
+  text-align: center;
+  margin-top: 20px;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+}
+
+.auth-link a {
+  color: var(--flame-yellow);
+  text-decoration: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.auth-link a:hover { text-decoration: underline; }
+
+.auth-error {
+  background: rgba(231,76,60,0.2);
+  border: 1px solid rgba(231,76,60,0.4);
+  color: #ff6b6b;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  text-align: center;
+  display: none;
+}
+
+.auth-error.show { display: block; animation: shake 0.4s ease; }
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+
+.fire-logo {
+  font-size: 4rem;
+  text-align: center;
+  margin-bottom: 10px;
+  animation: fireGlow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes fireGlow {
+  0% { filter: drop-shadow(0 0 10px rgba(255,107,53,0.6)); transform: scale(1); }
+  100% { filter: drop-shadow(0 0 25px rgba(255,215,0,0.8)); transform: scale(1.05); }
+}
+
+/* ========== DASHBOARD ========== */
+.dashboard-bg {
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.dashboard-header {
+  width: 100%;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.dashboard-header h2 {
+  color: var(--flame-yellow);
+  font-size: 1.3rem;
+  text-shadow: 0 0 10px rgba(255,215,0,0.3);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--flame-orange), var(--flame-yellow));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
+.user-name {
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.btn-logout {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.8rem;
+}
+
+.btn-logout:hover { background: rgba(255,255,255,0.2); }
+
+.dashboard-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 16px 40px;
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.stats-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+.stat-card {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 14px 20px;
+  text-align: center;
+  min-width: 110px;
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.stat-card .stat-icon { font-size: 1.6rem; margin-bottom: 4px; }
+.stat-card .stat-val { font-family: 'Fredoka One', cursive; font-size: 1.5rem; color: var(--flame-yellow); }
+.stat-card .stat-label { color: rgba(255,255,255,0.5); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* World sections */
+.world-section {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.world-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 10px 16px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.world-header .world-icon { font-size: 1.8rem; }
+.world-header h3 { color: #fff; font-size: 1.1rem; }
+.world-header .world-desc { color: rgba(255,255,255,0.4); font-size: 0.75rem; margin-left: auto; }
+
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.level-card {
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 16px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 2px solid rgba(255,255,255,0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.level-card:hover:not(.locked) {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(255,215,0,0.15);
+  border-color: rgba(255,215,0,0.4);
+}
+
+.level-card.locked {
+  opacity: 0.35;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+
+.level-card.completed {
+  border-color: rgba(76,175,80,0.4);
+  background: rgba(76,175,80,0.08);
+}
+
+.level-card.perfect {
+  border-color: rgba(255,215,0,0.5);
+  background: rgba(255,215,0,0.08);
+  box-shadow: 0 0 20px rgba(255,215,0,0.1);
+}
+
+.level-card .level-num {
+  position: absolute;
+  top: 6px;
+  left: 10px;
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.3);
+}
+
+.level-card .level-icon { font-size: 2.2rem; margin-bottom: 4px; }
+.level-card h3 { color: #fff; font-size: 0.85rem; line-height: 1.2; }
+.level-card p { color: rgba(255,255,255,0.4); font-size: 0.65rem; margin-top: 2px; }
+
+.level-stars {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  line-height: 1;
+}
+
+.star-req {
+  font-size: 0.6rem;
+  color: rgba(255,255,255,0.3);
+  margin-top: 4px;
+}
+
+.lock-icon {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 1.1rem;
+}
+
+/* ========== GAME ========== */
+.game-screen {
+  background: #000;
+  flex-direction: column;
+}
+
+.game-hud {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 56px;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 200;
+}
+
+.hud-left, .hud-right { display: flex; align-items: center; gap: 12px; }
+
+.hud-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.hud-item .hud-icon { font-size: 1.1rem; }
+
+.hud-stars-display {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 1rem;
+}
+
+.btn-back-game {
+  padding: 6px 14px;
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.8rem;
+  transition: all 0.3s;
+}
+
+.btn-back-game:hover { background: rgba(255,255,255,0.25); }
+
+#gameCanvas {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* ========== MOBILE CONTROLS ========== */
+.mobile-controls {
+  position: fixed;
+  bottom: 20px;
+  left: 0; right: 0;
+  display: none;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 200;
+  pointer-events: none;
+}
+
+.mobile-controls.show { display: flex; }
+
+.dpad {
+  display: grid;
+  grid-template-columns: 56px 56px 56px;
+  grid-template-rows: 56px 56px 56px;
+  gap: 3px;
+  pointer-events: auto;
+}
+
+.dpad-btn {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.dpad-btn:active { background: rgba(255,255,255,0.35); }
+.dpad-empty { visibility: hidden; }
+
+.action-buttons {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.action-btn {
+  width: 66px; height: 66px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.3);
+  background: rgba(255,107,53,0.3);
+  color: #fff;
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.75rem;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.action-btn:active { background: rgba(255,107,53,0.6); }
+
+/* ========== POPUPS ========== */
+.treasure-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 500;
+  backdrop-filter: blur(5px);
+}
+
+.treasure-overlay.show {
+  display: flex;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.treasure-popup {
+  background: linear-gradient(135deg, #fff9e6, #fff);
+  border-radius: 24px;
+  padding: 32px;
+  max-width: 440px;
+  width: 90vw;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 3px solid var(--flame-yellow);
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+.treasure-popup .chest-anim {
+  font-size: 3.5rem;
+  animation: chestBounce 0.8s ease infinite alternate;
+}
+
+@keyframes chestBounce {
+  0% { transform: translateY(0) rotate(-3deg); }
+  100% { transform: translateY(-10px) rotate(3deg); }
+}
+
+.treasure-popup .reward-type {
+  display: inline-block;
+  padding: 3px 14px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  margin: 10px 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.reward-type.knowledge { background: #e8f5e9; color: #2e7d32; }
+.reward-type.school { background: #e3f2fd; color: #1565c0; }
+.reward-type.life { background: #fce4ec; color: #c62828; }
+
+.treasure-popup h2 { color: #333; font-size: 1.3rem; margin-bottom: 8px; }
+
+.treasure-popup p {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.btn-continue {
+  padding: 11px 32px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, var(--flame-orange), var(--flame-yellow));
+  color: #fff;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255,107,53,0.4);
+  transition: all 0.3s;
+}
+
+.btn-continue:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255,107,53,0.6);
+}
+
+.challenge-popup {
+  background: linear-gradient(135deg, #e8f5e9, #fff);
+  border: 3px solid var(--grass-green);
+}
+
+.challenge-popup .options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.challenge-option {
+  padding: 12px;
+  border-radius: 12px;
+  border: 3px solid #e0e0e0;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+  font-family: 'Nunito', sans-serif;
+  color: #333;
+}
+
+.challenge-option:hover { border-color: var(--gem-blue); background: #e3f2fd; }
+
+.challenge-option.correct {
+  border-color: var(--grass-green);
+  background: #c8e6c9;
+  animation: correctPulse 0.5s ease;
+}
+
+.challenge-option.wrong {
+  border-color: var(--gem-red);
+  background: #ffcdd2;
+  animation: shake 0.4s ease;
+}
+
+@keyframes correctPulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* ========== SPARKLE ========== */
+.sparkle-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.sparkle {
+  position: absolute;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  animation: sparkleAnim 1s ease-out forwards;
+}
+
+@keyframes sparkleAnim {
+  0% { transform: scale(0) translateY(0); opacity: 1; }
+  50% { transform: scale(1.5) translateY(-30px); opacity: 0.8; }
+  100% { transform: scale(0) translateY(-60px); opacity: 0; }
+}
+
+/* ========== LEVEL COMPLETE ========== */
+.level-complete-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 600;
+}
+
+.level-complete-overlay.show { display: flex; }
+
+.level-complete-card {
+  background: linear-gradient(135deg, #1a1a3e, #0f3460);
+  border-radius: 28px;
+  padding: 36px;
+  text-align: center;
+  max-width: 440px;
+  width: 90vw;
+  animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 0 60px rgba(255,215,0,0.3);
+  border: 2px solid rgba(255,215,0,0.3);
+}
+
+.level-complete-card h1 {
+  color: var(--flame-yellow);
+  font-size: 1.8rem;
+  text-shadow: 0 0 20px rgba(255,215,0,0.4);
+  margin-bottom: 8px;
+}
+
+.level-complete-card .big-stars {
+  font-size: 2.5rem;
+  margin: 14px 0;
+  animation: starSpin 2s ease infinite;
+  letter-spacing: 4px;
+}
+
+@keyframes starSpin {
+  0%,100% { transform: rotate(-3deg) scale(1); }
+  50% { transform: rotate(3deg) scale(1.08); }
+}
+
+.level-complete-card p {
+  color: rgba(255,255,255,0.8);
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.level-complete-card .unlock-msg {
+  color: var(--grass-green);
+  font-weight: 800;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+  padding: 8px 16px;
+  background: rgba(76,175,80,0.15);
+  border-radius: 10px;
+  display: inline-block;
+}
+
+.level-complete-card .btn-continue {
+  background: linear-gradient(135deg, var(--flame-orange), var(--flame-yellow));
+  color: #fff;
+}
+
+.level-complete-card .btn-replay {
+  padding: 10px 28px;
+  border-radius: 14px;
+  border: 2px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: all 0.3s;
+}
+
+.level-complete-card .btn-replay:hover { background: rgba(255,255,255,0.15); }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .auth-card { padding: 28px 24px; }
+  .auth-card h1 { font-size: 1.7rem; }
+  .mobile-controls.show { display: flex; }
+  .stats-row { gap: 8px; }
+  .stat-card { min-width: 90px; padding: 10px 14px; }
+  .level-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .level-card { padding: 12px 8px; }
+  .level-card .level-icon { font-size: 1.8rem; }
+  .level-card h3 { font-size: 0.75rem; }
+}
+
+@media (max-width: 480px) {
+  .level-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .level-card { padding: 10px 6px; }
+  .level-card .level-icon { font-size: 1.5rem; }
+  .level-card h3 { font-size: 0.7rem; }
+  .level-stars { font-size: 0.7rem; }
+}
+
+@media (min-width: 769px) {
+  .mobile-controls { display: none !important; }
+}
+
+.toast {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  padding: 10px 24px;
+  border-radius: 14px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  z-index: 9999;
+  opacity: 0;
+  transition: all 0.4s;
+  pointer-events: none;
+  text-align: center;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast.success { background: linear-gradient(135deg, #4CAF50, #66BB6A); }
+.toast.error { background: linear-gradient(135deg, #E74C3C, #EF5350); }
+.toast.info { background: linear-gradient(135deg, #3498DB, #42A5F5); }
+
+/* Progress bar for worlds */
+.world-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.world-progress-bar {
+  width: 80px;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.world-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--flame-orange), var(--flame-yellow));
+  transition: width 0.5s ease;
+}
+
+.world-progress-text {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+</style>
+</head>
+<body>
+
+<div class="sparkle-container" id="sparkleContainer"></div>
+<div class="toast" id="toast"></div>
+
+<!-- LOGIN -->
+<div class="screen auth-bg active" id="loginScreen">
+  <div class="auth-card">
+    <div class="fire-logo">🔥</div>
+    <h1>Glorious Blaze</h1>
+    <p class="subtitle">An Educational Adventure Awaits!</p>
+    <div class="auth-error" id="loginError"></div>
+    <form id="loginForm" onsubmit="return handleLogin(event)">
+      <div class="form-group">
+        <label>👤 Username</label>
+        <input type="text" id="loginUser" placeholder="Enter your username" required autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label>🔒 Password</label>
+        <input type="password" id="loginPass" placeholder="Enter your password" required autocomplete="current-password" />
+      </div>
+      <button type="submit" class="btn-blaze">🚀 Start Adventure!</button>
+    </form>
+    <p class="auth-link">New explorer? <a onclick="showScreen('registerScreen')">Create Account</a></p>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div class="screen auth-bg" id="registerScreen">
+  <div class="auth-card">
+    <div class="fire-logo">⭐</div>
+    <h1>Join the Quest!</h1>
+    <p class="subtitle">Create your explorer profile</p>
+    <div class="auth-error" id="registerError"></div>
+    <form id="registerForm" onsubmit="return handleRegister(event)">
+      <div class="form-group">
+        <label>👤 Choose a Username</label>
+        <input type="text" id="regUser" placeholder="Your explorer name" required minlength="3" />
+      </div>
+      <div class="form-group">
+        <label>🔒 Create Password</label>
+        <input type="password" id="regPass" placeholder="At least 4 characters" required minlength="4" />
+      </div>
+      <div class="form-group">
+        <label>🔒 Confirm Password</label>
+        <input type="password" id="regPassConfirm" placeholder="Type password again" required />
+      </div>
+      <button type="submit" class="btn-blaze">🌟 Create Account</button>
+    </form>
+    <p class="auth-link">Already exploring? <a onclick="showScreen('loginScreen')">Log In</a></p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="screen dashboard-bg" id="dashboardScreen">
+  <div class="dashboard-header">
+    <h2>🔥 Glorious Blaze</h2>
+    <div class="user-info">
+      <div class="user-avatar">🧑‍🚀</div>
+      <span class="user-name" id="dashUser">Explorer</span>
+      <button class="btn-logout" onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+  <div class="dashboard-content" id="dashboardContent">
+    <!-- Generated by JS -->
+  </div>
+</div>
+
+<!-- GAME -->
+<div class="screen game-screen" id="gameScreen">
+  <div class="game-hud">
+    <div class="hud-left">
+      <button class="btn-back-game" onclick="exitGame()">◀ Back</button>
+      <div class="hud-item">
+        <span class="hud-icon">🗺️</span>
+        <span id="hudLevel">Level 1</span>
+      </div>
+    </div>
+    <div class="hud-right">
+      <div class="hud-item">
+        <span class="hud-icon">💎</span>
+        <span id="hudGems">0</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-icon">📜</span>
+        <span id="hudScrolls">0</span>
+      </div>
+      <div class="hud-stars-display" id="hudStarsDisplay"></div>
+    </div>
+  </div>
+
+  <canvas id="gameCanvas"></canvas>
+
+  <div class="mobile-controls show" id="mobileControls">
+    <div class="dpad">
+      <div class="dpad-empty"></div>
+      <button class="dpad-btn" data-dir="up">▲</button>
+      <div class="dpad-empty"></div>
+      <button class="dpad-btn" data-dir="left">◀</button>
+      <div class="dpad-empty"></div>
+      <button class="dpad-btn" data-dir="right">▶</button>
+      <div class="dpad-empty"></div>
+      <button class="dpad-btn" data-dir="down">▼</button>
+      <div class="dpad-empty"></div>
+    </div>
+    <div class="action-buttons">
+      <button class="action-btn" id="btnAction">ACT</button>
+    </div>
+  </div>
+</div>
+
+<!-- TREASURE POPUP -->
+<div class="treasure-overlay" id="treasureOverlay">
+  <div class="treasure-popup" id="treasurePopup">
+    <div class="chest-anim" id="treasureIcon">🎁</div>
+    <div class="reward-type knowledge" id="rewardType">Fun Knowledge</div>
+    <h2 id="treasureTitle">Amazing Discovery!</h2>
+    <p id="treasureText">You found something wonderful!</p>
+    <button class="btn-continue" onclick="closeTreasure()">✨ Awesome!</button>
+  </div>
+</div>
+
+<!-- CHALLENGE POPUP -->
+<div class="treasure-overlay" id="challengeOverlay">
+  <div class="treasure-popup challenge-popup" id="challengePopup">
+    <div class="chest-anim">🧩</div>
+    <h2 id="challengeTitle">Mini Challenge!</h2>
+    <p id="challengeText">Can you solve this?</p>
+    <div class="options-grid" id="challengeOptions"></div>
+    <button class="btn-continue" id="challengeContinue" style="display:none" onclick="closeChallenge()">Continue ➜</button>
+  </div>
+</div>
+
+<!-- LEVEL COMPLETE -->
+<div class="level-complete-overlay" id="levelCompleteOverlay">
+  <div class="level-complete-card">
+    <h1>🎉 Level Complete!</h1>
+    <div class="big-stars" id="completeStars">⭐⭐⭐⭐⭐</div>
+    <p id="completeMsg">You found all the treasures!</p>
+    <div class="unlock-msg" id="unlockMsg" style="display:none"></div>
+    <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+      <button class="btn-continue" onclick="exitToMenu()">🏠 Menu</button>
+      <button class="btn-replay" onclick="replayLevel()">🔄 Replay</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==========================================
+//  DATABASE (localStorage)
+// ==========================================
+const DB = {
+  getUsers() { return JSON.parse(localStorage.getItem('gb_users') || '[]'); },
+  saveUsers(users) { localStorage.setItem('gb_users', JSON.stringify(users)); },
+  hashPassword(pw) {
+    let hash = 0;
+    for (let i = 0; i < pw.length; i++) { const c = pw.charCodeAt(i); hash = ((hash << 5) - hash) + c; hash = hash & hash; }
+    return 'h_' + Math.abs(hash).toString(36) + '_' + btoa(pw).slice(0, 8);
+  },
+  register(username, password) {
+    const users = this.getUsers();
+    if (users.find(u => u.username.toLowerCase() === username.toLowerCase())) return { success: false, error: 'Username already taken!' };
+    const user = { id: Date.now(), username, password_hash: this.hashPassword(password), progress: { level: 1, treasures_found: 0, facts_learned: 0, stars: 0, levels_completed: {} } };
+    users.push(user);
+    this.saveUsers(users);
+    return { success: true, user };
+  },
+  login(username, password) {
+    const users = this.getUsers();
+    const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+    if (!user) return { success: false, error: 'User not found!' };
+    if (user.password_hash !== this.hashPassword(password)) return { success: false, error: 'Incorrect password!' };
+    return { success: true, user };
+  },
+  saveProgress(userId, progress) {
+    const users = this.getUsers();
+    const user = users.find(u => u.id === userId);
+    if (user) { user.progress = progress; this.saveUsers(users); }
+  },
+  getSession() { const s = localStorage.getItem('gb_session'); return s ? JSON.parse(s) : null; },
+  setSession(user) { localStorage.setItem('gb_session', JSON.stringify({ id: user.id, username: user.username, progress: user.progress })); },
+  clearSession() { localStorage.removeItem('gb_session'); }
+};
+
+// ==========================================
+//  EDUCATIONAL CONTENT (expanded)
+// ==========================================
+const EDUCATION = {
+  knowledge: [
+    { icon: '🐙', title: 'Octopus Fact!', text: 'An octopus has 3 hearts and blue blood! Two hearts pump blood to the gills, and one pumps it to the body.' },
+    { icon: '🚀', title: 'Space Wonder!', text: 'A day on Venus is longer than its year! Venus takes 243 Earth days to rotate once, but only 225 days to orbit the Sun.' },
+    { icon: '🦕', title: 'Dino Discovery!', text: 'The T-Rex had teeth as big as bananas! Some were over 12 inches long, perfect for chomping!' },
+    { icon: '🏺', title: 'Ancient Treasure!', text: 'The Great Pyramid of Giza was the tallest building in the world for over 3,800 years!' },
+    { icon: '🐋', title: 'Ocean Giant!', text: 'The blue whale is the largest animal ever! Its heart is as big as a small car and can weigh 400 pounds.' },
+    { icon: '🌋', title: 'Volcano Fact!', text: 'There are about 1,500 active volcanoes on Earth! Some are even found under the ocean.' },
+    { icon: '🦎', title: 'Amazing Animal!', text: 'Chameleons can move their eyes in two different directions at the same time! Super spy vision!' },
+    { icon: '🌙', title: 'Moon Mystery!', text: 'Footprints left on the Moon will stay there for millions of years because there is no wind to blow them away!' },
+    { icon: '🦈', title: 'Shark Fact!', text: 'Sharks have been around longer than dinosaurs! They first appeared about 450 million years ago.' },
+    { icon: '⚡', title: 'Lightning!', text: 'Lightning is 5 times hotter than the surface of the Sun! It can reach 30,000 degrees Celsius!' },
+    { icon: '🐘', title: 'Elephant Memory!', text: 'Elephants never forget! They can remember friends and places for many, many years.' },
+    { icon: '🪐', title: 'Saturn Rings!', text: 'Saturn\'s rings are made of ice and rock. Some pieces are as small as grains of sand, others as big as houses!' },
+    { icon: '🦋', title: 'Butterfly Magic!', text: 'Butterflies taste with their feet! They land on food to taste it before eating.' },
+    { icon: '🏛️', title: 'Ancient Wonder!', text: 'The ancient library of Alexandria held over 400,000 scrolls of knowledge from around the world!' },
+    { icon: '🐬', title: 'Dolphin Brain!', text: 'Dolphins sleep with one eye open! Half their brain stays awake to watch for danger.' },
+    { icon: '🐝', title: 'Bee Dance!', text: 'Honey bees communicate by dancing! They do a waggle dance to tell other bees where flowers are.' },
+    { icon: '🦩', title: 'Flamingo Color!', text: 'Flamingos are born white! They turn pink because of the shrimp and algae they eat.' },
+    { icon: '🌊', title: 'Deep Sea!', text: 'The deepest part of the ocean is the Mariana Trench. It is deeper than Mount Everest is tall!' },
+    { icon: '🦉', title: 'Owl Eyes!', text: 'Owls cannot move their eyeballs. Instead, they can turn their heads almost all the way around - up to 270 degrees!' },
+    { icon: '🐧', title: 'Penguin Love!', text: 'Male penguins search for the perfect pebble to give to a female penguin as a gift. How romantic!' },
+    { icon: '🌈', title: 'Rainbow Secret!', text: 'Rainbows are actually full circles! We only see half because the ground gets in the way.' },
+    { icon: '🐢', title: 'Turtle Power!', text: 'Sea turtles have been around for over 100 million years - they survived the dinosaur extinction!' },
+    { icon: '🦜', title: 'Parrot Talk!', text: 'African grey parrots can learn over 1,000 words and even understand what they mean!' },
+    { icon: '🏔️', title: 'Mountain Fact!', text: 'Mount Everest grows about 4mm taller every year because the tectonic plates keep pushing it up!' },
+    { icon: '🐺', title: 'Wolf Pack!', text: 'Wolves can hear sounds up to 10 miles away! They howl to communicate with their pack.' },
+    { icon: '🌸', title: 'Cherry Blossoms!', text: 'In Japan, cherry blossom season is celebrated with picnics under the trees. It is called Hanami!' },
+    { icon: '🦊', title: 'Fox Compass!', text: 'Red foxes can use the Earth\'s magnetic field to hunt! They are like living compasses.' },
+    { icon: '🌏', title: 'Earth Spin!', text: 'Earth spins at about 1,000 miles per hour at the equator, but we do not feel it because everything moves with us!' },
+    { icon: '🐻', title: 'Bear Nap!', text: 'Bears do not truly hibernate. They enter a deep sleep called torpor and can wake up if disturbed!' },
+    { icon: '☀️', title: 'Sun Size!', text: 'You could fit about 1.3 million Earths inside the Sun! It is truly massive.' },
+  ],
+  school: [
+    { icon: '🔢', title: 'Math Fun!', text: 'If you have 7 gems and find 5 more, you have 12 gems total! 7 + 5 = 12. Great counting!' },
+    { icon: '📖', title: 'New Word!', text: '"ADVENTURE" means an exciting experience full of discovery. You are on an adventure right now!' },
+    { icon: '🌍', title: 'Geography!', text: 'There are 7 continents on Earth: Africa, Antarctica, Asia, Australia, Europe, North America, and South America!' },
+    { icon: '🔬', title: 'Science!', text: 'Water can be a solid (ice), a liquid (water), or a gas (steam). The same water changes forms!' },
+    { icon: '🧮', title: 'Math Time!', text: 'A triangle has 3 sides, a square has 4 sides, and a pentagon has 5 sides. Shapes are everywhere!' },
+    { icon: '📝', title: 'Vocabulary!', text: '"CURIOUS" means wanting to learn and discover new things. Being curious is a superpower!' },
+    { icon: '🌊', title: 'Geography!', text: 'The Pacific Ocean is the biggest ocean on Earth. It is larger than all the land put together!' },
+    { icon: '🌱', title: 'Science!', text: 'Plants make their own food using sunlight, water, and air. This magic process is called photosynthesis!' },
+    { icon: '➕', title: 'Quick Math!', text: 'Double any number by adding it to itself! 8 + 8 = 16, 15 + 15 = 30. You are a math star!' },
+    { icon: '📚', title: 'Word Power!', text: '"PERSEVERANCE" means not giving up even when things are hard. You show perseverance in this game!' },
+    { icon: '🗺️', title: 'Did You Know?', text: 'The Sahara Desert is almost as big as the entire United States! It is in northern Africa.' },
+    { icon: '🧲', title: 'Magnet Magic!', text: 'Magnets have two poles: North and South. Opposite poles attract, same poles push away!' },
+    { icon: '🔺', title: 'Geometry!', text: 'The angles inside a triangle always add up to 180 degrees. Every single triangle!' },
+    { icon: '🧪', title: 'Chemistry!', text: 'Everything in the universe is made of tiny building blocks called atoms. You have trillions of them!' },
+    { icon: '📐', title: 'Math Patterns!', text: 'The Fibonacci sequence goes 1, 1, 2, 3, 5, 8, 13... each number is the sum of the two before it!' },
+    { icon: '🌡️', title: 'Temperature!', text: 'Water freezes at 0 degrees Celsius (32 degrees F) and boils at 100 degrees Celsius (212 degrees F).' },
+    { icon: '🔤', title: 'Language!', text: 'The word "alphabet" comes from the first two Greek letters: Alpha and Beta!' },
+    { icon: '🌗', title: 'Moon Phases!', text: 'The Moon takes about 29.5 days to go through all its phases from new moon to full moon and back!' },
+    { icon: '⚖️', title: 'Measurement!', text: 'A meter is about the distance from a doorknob to the floor. There are 1,000 meters in a kilometer!' },
+    { icon: '🔵', title: 'Colors!', text: 'Red, blue, and yellow are primary colors. Mix them to make secondary colors: orange, green, and purple!' },
+  ],
+  life: [
+    { icon: '💛', title: 'Kindness!', text: 'A kind word can brighten someone\'s whole day! Try saying something nice to a friend today.' },
+    { icon: '🤝', title: 'Teamwork!', text: 'Great things happen when we work together! Every team member brings something special.' },
+    { icon: '🧩', title: 'Problem Solving!', text: 'When stuck, try a different approach! Every problem has a solution waiting to be found.' },
+    { icon: '⭐', title: 'Honesty!', text: 'Telling the truth makes you brave and strong! Honest people earn the trust of others.' },
+    { icon: '🌈', title: 'Be Yourself!', text: 'You are unique and amazing just the way you are! No one else in the world is exactly like you.' },
+    { icon: '🎯', title: 'Stay Focused!', text: 'Set small goals and celebrate when you reach them! Every big journey starts with one step.' },
+    { icon: '🫂', title: 'Empathy!', text: 'Try to understand how others feel. When someone is sad, a hug or kind word can mean the world!' },
+    { icon: '🌟', title: 'Courage!', text: 'Being brave does not mean not being scared. It means doing the right thing even when you are afraid!' },
+    { icon: '🙏', title: 'Gratitude!', text: 'Being thankful for what you have brings happiness! Try naming 3 things you are grateful for today.' },
+    { icon: '💪', title: 'Never Give Up!', text: 'Every expert was once a beginner! Keep practicing and you will get better at anything you try.' },
+    { icon: '🕊️', title: 'Forgiveness!', text: 'Forgiving others frees your heart from anger. Everyone makes mistakes - that is how we learn!' },
+    { icon: '🎭', title: 'Emotions!', text: 'All feelings are okay to have. Being happy, sad, angry, or scared are all normal parts of life.' },
+    { icon: '🌻', title: 'Patience!', text: 'Good things take time, like growing a garden. Be patient with yourself and others!' },
+    { icon: '🏅', title: 'Sportsmanship!', text: 'Winning is fun, but being a good loser is just as important. Congratulate others when they win!' },
+    { icon: '📞', title: 'Communication!', text: 'Use your words to tell people how you feel. Good communication helps solve problems peacefully.' },
+    { icon: '🧹', title: 'Responsibility!', text: 'Taking care of your things and helping at home shows you are growing up! Be proud of being responsible.' },
+    { icon: '🌱', title: 'Growth!', text: 'Mistakes are not failures - they are lessons! Every time you mess up, you learn something new.' },
+    { icon: '🤗', title: 'Inclusion!', text: 'Include everyone in your games and activities. Everyone deserves to feel welcome and valued!' },
+    { icon: '📖', title: 'Curiosity!', text: 'Ask questions about everything! Curious minds discover the most amazing things in the world.' },
+    { icon: '💫', title: 'Self-Belief!', text: 'Believe in yourself! You are capable of amazing things. Your potential is limitless!' },
+  ]
+};
+
+// ==========================================
+//  CHALLENGES (expanded)
+// ==========================================
+const CHALLENGES = [
+  { question: 'What do bees make?', options: ['Honey', 'Milk', 'Butter', 'Cheese'], correct: 0 },
+  { question: 'How many legs does a spider have?', options: ['4', '6', '8', '10'], correct: 2 },
+  { question: 'What is 3 + 4?', options: ['5', '6', '7', '8'], correct: 2 },
+  { question: 'Which planet is closest to the Sun?', options: ['Earth', 'Mercury', 'Venus', 'Mars'], correct: 1 },
+  { question: 'What color do you get mixing red and yellow?', options: ['Green', 'Purple', 'Orange', 'Pink'], correct: 2 },
+  { question: 'How many sides does a hexagon have?', options: ['4', '5', '6', '7'], correct: 2 },
+  { question: 'What is the biggest animal on Earth?', options: ['Elephant', 'Blue Whale', 'Giraffe', 'Shark'], correct: 1 },
+  { question: 'Which season comes after summer?', options: ['Winter', 'Spring', 'Fall', 'Summer'], correct: 2 },
+  { question: 'What is 10 - 3?', options: ['5', '6', '7', '8'], correct: 2 },
+  { question: 'How many days are in a week?', options: ['5', '6', '7', '8'], correct: 2 },
+  { question: 'What do plants need to grow?', options: ['Candy', 'Sunlight', 'Toys', 'Books'], correct: 1 },
+  { question: 'Which animal says "moo"?', options: ['Dog', 'Cat', 'Cow', 'Duck'], correct: 2 },
+  { question: 'What shape is a stop sign?', options: ['Circle', 'Square', 'Triangle', 'Octagon'], correct: 3 },
+  { question: 'What is 5 x 2?', options: ['7', '8', '10', '12'], correct: 2 },
+  { question: 'Where do penguins live?', options: ['Desert', 'Forest', 'Antarctica', 'Moon'], correct: 2 },
+  { question: 'What is 15 + 6?', options: ['19', '20', '21', '22'], correct: 2 },
+  { question: 'How many months have 31 days?', options: ['5', '6', '7', '8'], correct: 2 },
+  { question: 'What gas do we breathe in?', options: ['Carbon dioxide', 'Nitrogen', 'Oxygen', 'Helium'], correct: 2 },
+  { question: 'Which is the largest ocean?', options: ['Atlantic', 'Indian', 'Arctic', 'Pacific'], correct: 3 },
+  { question: 'What is a baby dog called?', options: ['Kitten', 'Puppy', 'Calf', 'Foal'], correct: 1 },
+  { question: 'How many bones do adults have?', options: ['106', '156', '206', '306'], correct: 2 },
+  { question: 'What is 8 x 3?', options: ['18', '21', '24', '27'], correct: 2 },
+  { question: 'Which fruit is yellow and curved?', options: ['Apple', 'Orange', 'Banana', 'Grape'], correct: 2 },
+  { question: 'What is the capital of France?', options: ['London', 'Paris', 'Berlin', 'Rome'], correct: 1 },
+  { question: 'How many colors in a rainbow?', options: ['5', '6', '7', '8'], correct: 2 },
+  { question: 'What is H2O?', options: ['Oxygen', 'Hydrogen', 'Water', 'Salt'], correct: 2 },
+  { question: 'Which animal has a long trunk?', options: ['Giraffe', 'Lion', 'Elephant', 'Bear'], correct: 2 },
+  { question: 'What is 100 divided by 4?', options: ['20', '25', '30', '40'], correct: 1 },
+  { question: 'How many planets in our solar system?', options: ['6', '7', '8', '9'], correct: 2 },
+  { question: 'What do caterpillars become?', options: ['Spiders', 'Butterflies', 'Birds', 'Bees'], correct: 1 },
+];
+
+// ==========================================
+//  WORLD DEFINITIONS
+// ==========================================
+const WORLDS = [
+  { name: 'Enchanted Meadows', icon: '🌻', color: '#4CAF50', levels: [1,2,3,4,5,6] },
+  { name: 'Crystal Depths', icon: '💎', color: '#9B59B6', levels: [7,8,9,10,11,12] },
+  { name: 'Sky Kingdom', icon: '☁️', color: '#3498DB', levels: [13,14,15,16,17,18] },
+  { name: 'Ancient Realms', icon: '🏺', color: '#E67E22', levels: [19,20,21,22,23,24] },
+];
+
+// ==========================================
+//  LEVEL GENERATOR
+// ==========================================
+function generateLevel(id, name, icon, desc, bgColors, width, treasureCount, hasChallenges, decTypes) {
+  // Auto-generate platforms
+  const platforms = [{ x: 0, y: 0, w: width, h: 40, ground: true }];
+  const platCount = Math.floor(width / 300);
+  for (let i = 0; i < platCount; i++) {
+    platforms.push({
+      x: 180 + i * (width / platCount) + (Math.random() * 60 - 30),
+      y: 100 + Math.random() * 180,
+      w: 130 + Math.random() * 100,
+      h: 18 + Math.random() * 8
+    });
+  }
+
+  // Auto-generate decorations
+  const decorations = [];
+  const decCount = Math.floor(width / 200);
+  for (let i = 0; i < decCount; i++) {
+    decorations.push({
+      type: decTypes[Math.floor(Math.random() * decTypes.length)],
+      x: 100 + i * (width / decCount) + Math.random() * 80,
+      y: decTypes.includes('cloud_dec') ? 250 + Math.random() * 100 : 0
+    });
+  }
+
+  return { id, name, icon, desc, bg: bgColors, treasureCount, width, hasChallenges, platforms, decorations };
+}
+
+const LEVELS = [
+  // WORLD 1: Enchanted Meadows (1-6)
+  generateLevel(1, 'Sunny Meadow', '🌻', 'A bright meadow of flowers', { sky: '#87CEEB', ground: '#7CCD7C', accent: '#228B22' }, 2200, 5, false, ['tree','flower','bush','flower']),
+  generateLevel(2, 'Daisy Fields', '🌼', 'Endless fields of daisies', { sky: '#98D8E8', ground: '#8FBC8F', accent: '#2E8B57' }, 2400, 6, false, ['flower','tree','bush','flower']),
+  generateLevel(3, 'Mushroom Grove', '🍄', 'Magical mushroom forest', { sky: '#B0E0E6', ground: '#6B8E23', accent: '#556B2F' }, 2600, 6, true, ['tree','bush','flower','tree']),
+  generateLevel(4, 'Butterfly Garden', '🦋', 'A garden full of butterflies', { sky: '#87CEEB', ground: '#90EE90', accent: '#3CB371' }, 2800, 7, true, ['flower','flower','tree','bush']),
+  generateLevel(5, 'Honeybee Hive', '🐝', 'Sweet honey adventure', { sky: '#FFE4B5', ground: '#DAA520', accent: '#B8860B' }, 3000, 8, true, ['tree','flower','bush','tree']),
+  generateLevel(6, 'Rainbow Bridge', '🌈', 'Cross the magical rainbow', { sky: '#E0F7FA', ground: '#81C784', accent: '#388E3C' }, 3200, 8, true, ['flower','tree','bush','flower']),
+
+  // WORLD 2: Crystal Depths (7-12)
+  generateLevel(7, 'Crystal Cave', '💎', 'Sparkling caverns below', { sky: '#1a1a3e', ground: '#4a4a6e', accent: '#6a5acd' }, 2400, 6, true, ['crystal','stalactite','crystal']),
+  generateLevel(8, 'Amethyst Mine', '🔮', 'Deep purple gemstone mine', { sky: '#1a0a2e', ground: '#3d2d5c', accent: '#7B68EE' }, 2600, 7, true, ['crystal','crystal','stalactite']),
+  generateLevel(9, 'Glowworm Grotto', '✨', 'Bioluminescent cave wonder', { sky: '#0a1628', ground: '#2d4a5e', accent: '#4682B4' }, 2800, 7, true, ['crystal','stalactite','crystal']),
+  generateLevel(10, 'Ruby Tunnels', '❤️', 'Tunnels of red gems', { sky: '#2a0a0a', ground: '#5c2d2d', accent: '#CD5C5C' }, 3000, 8, true, ['crystal','crystal','stalactite','crystal']),
+  generateLevel(11, 'Diamond Halls', '💠', 'Shimmering diamond palace', { sky: '#0a1a2a', ground: '#3a5a7a', accent: '#5F9EA0' }, 3200, 9, true, ['crystal','stalactite','crystal','crystal']),
+  generateLevel(12, 'Emerald Depths', '💚', 'The deepest green cavern', { sky: '#0a2a1a', ground: '#2d5c3d', accent: '#3CB371' }, 3400, 9, true, ['crystal','crystal','stalactite','crystal']),
+
+  // WORLD 3: Sky Kingdom (13-18)
+  generateLevel(13, 'Cloud Walk', '☁️', 'Walk among the clouds', { sky: '#E8F4F8', ground: '#8BC34A', accent: '#4CAF50' }, 2600, 7, true, ['cloud_dec','cloud_dec','cloud_dec']),
+  generateLevel(14, 'Star Bridge', '🌟', 'A bridge of starlight', { sky: '#1a1a4e', ground: '#4a4aae', accent: '#6a6aff' }, 2800, 7, true, ['cloud_dec','cloud_dec','cloud_dec']),
+  generateLevel(15, 'Moon Palace', '🌙', 'Lunar palace in the sky', { sky: '#0a0a2e', ground: '#5a5a8e', accent: '#9a9abe' }, 3000, 8, true, ['cloud_dec','cloud_dec','cloud_dec']),
+  generateLevel(16, 'Aurora Falls', '🌌', 'Northern lights waterfall', { sky: '#0a2a3a', ground: '#2d6a5a', accent: '#48D1CC' }, 3200, 9, true, ['cloud_dec','cloud_dec','cloud_dec']),
+  generateLevel(17, 'Thunder Peak', '⛈️', 'Storm mountain summit', { sky: '#2a2a3a', ground: '#5a5a6a', accent: '#778899' }, 3400, 9, true, ['cloud_dec','cloud_dec','cloud_dec']),
+  generateLevel(18, 'Solar Temple', '☀️', 'Temple of the sun god', { sky: '#FFE4B5', ground: '#DEB887', accent: '#D2691E' }, 3600, 10, true, ['cloud_dec','cloud_dec','cloud_dec']),
+
+  // WORLD 4: Ancient Realms (19-24)
+  generateLevel(19, 'Dino Valley', '🦕', 'Prehistoric wonderland', { sky: '#FFE4B5', ground: '#D2691E', accent: '#8B4513' }, 2800, 8, true, ['volcano','bone','palm','bone']),
+  generateLevel(20, 'Pharaoh Tomb', '🏺', 'Ancient Egyptian tomb', { sky: '#2a1a0a', ground: '#8B7355', accent: '#CD853F' }, 3000, 8, true, ['volcano','bone','palm']),
+  generateLevel(21, 'Dragon Nest', '🐉', 'Home of baby dragons', { sky: '#2a0a0a', ground: '#8B2500', accent: '#CD3700' }, 3200, 9, true, ['volcano','volcano','bone','palm']),
+  generateLevel(22, 'Pirate Cove', '🏴‍☠️', 'Hidden pirate treasure', { sky: '#4682B4', ground: '#C2B280', accent: '#DEB887' }, 3400, 10, true, ['palm','palm','bone']),
+  generateLevel(23, 'Wizard Tower', '🧙', 'Top of the wizard tower', { sky: '#1a0a3a', ground: '#4a2d7a', accent: '#8B5CF6' }, 3600, 10, true, ['crystal','crystal','stalactite','crystal']),
+  generateLevel(24, 'Blaze Summit', '🔥', 'The final blazing peak!', { sky: '#1a0505', ground: '#8B0000', accent: '#FF4500' }, 4000, 12, true, ['volcano','volcano','volcano','bone']),
+];
+
+// ==========================================
+//  CONSTANTS
+// ==========================================
+const MAX_STARS = 5;
+const STARS_TO_UNLOCK = 5; // Need 5 stars to unlock next level
+
+// ==========================================
+//  GLOBAL STATE
+// ==========================================
+let currentUser = null;
+let currentLevel = null;
+let gameRunning = false;
+let gameLoopId = null;
+let challengeUsedIndices = [];
+let educationUsedIndices = { knowledge: [], school: [], life: [] };
+
+// ==========================================
+//  SCREEN MANAGEMENT
+// ==========================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showToast(msg, type = 'info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type + ' show';
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ==========================================
+//  AUTH
+// ==========================================
+function handleLogin(e) {
+  e.preventDefault();
+  const username = document.getElementById('loginUser').value.trim();
+  const password = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginError');
+  if (!username || !password) { errEl.textContent = 'Please fill in all fields!'; errEl.classList.add('show'); return false; }
+  const result = DB.login(username, password);
+  if (!result.success) { errEl.textContent = result.error; errEl.classList.add('show'); return false; }
+  errEl.classList.remove('show');
+  currentUser = result.user;
+  DB.setSession(result.user);
+  showToast('Welcome back, ' + username + '! 🔥', 'success');
+  loadDashboard();
+  return false;
+}
+
+function handleRegister(e) {
+  e.preventDefault();
+  const username = document.getElementById('regUser').value.trim();
+  const password = document.getElementById('regPass').value;
+  const confirm = document.getElementById('regPassConfirm').value;
+  const errEl = document.getElementById('registerError');
+  if (!username || !password || !confirm) { errEl.textContent = 'Please fill in all fields!'; errEl.classList.add('show'); return false; }
+  if (username.length < 3) { errEl.textContent = 'Username must be at least 3 characters!'; errEl.classList.add('show'); return false; }
+  if (password.length < 4) { errEl.textContent = 'Password must be at least 4 characters!'; errEl.classList.add('show'); return false; }
+  if (password !== confirm) { errEl.textContent = 'Passwords do not match!'; errEl.classList.add('show'); return false; }
+  const result = DB.register(username, password);
+  if (!result.success) { errEl.textContent = result.error; errEl.classList.add('show'); return false; }
+  errEl.classList.remove('show');
+  currentUser = result.user;
+  DB.setSession(result.user);
+  showToast('Account created! Welcome, ' + username + '! 🌟', 'success');
+  loadDashboard();
+  return false;
+}
+
+function handleLogout() {
+  DB.clearSession();
+  currentUser = null;
+  showScreen('loginScreen');
+  showToast('See you next time, explorer! 👋', 'info');
+}
+
+// ==========================================
+//  STAR CALCULATION
+// ==========================================
+function calculateStars(collected, total, challengeBonus) {
+  // 5-star system based on collection percentage + challenge bonus
+  const ratio = collected / total;
+  let stars = 0;
+  if (ratio >= 0.2) stars = 1;
+  if (ratio >= 0.4) stars = 2;
+  if (ratio >= 0.6) stars = 3;
+  if (ratio >= 0.8) stars = 4;
+  if (ratio >= 1.0) stars = 5;
+  return Math.min(MAX_STARS, stars);
+}
+
+function isLevelUnlocked(levelId, progress) {
+  if (levelId === 1) return true;
+  const prevCompleted = progress.levels_completed && progress.levels_completed[levelId - 1];
+  if (!prevCompleted) return false;
+  return prevCompleted.stars >= STARS_TO_UNLOCK;
+}
+
+function renderStars(count, max) {
+  return '⭐'.repeat(count) + '☆'.repeat(max - count);
+}
+
+// ==========================================
+//  DASHBOARD
+// ==========================================
+function loadDashboard() {
+  showScreen('dashboardScreen');
+  const p = currentUser.progress;
+  const content = document.getElementById('dashboardContent');
+
+  // Calculate total stars
+  let totalStars = 0;
+  let totalMaxStars = LEVELS.length * MAX_STARS;
+  if (p.levels_completed) {
+    Object.values(p.levels_completed).forEach(lc => { totalStars += (lc.stars || 0); });
+  }
+
+  content.innerHTML = '';
+
+  // Stats row
+  const statsHTML = `
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-val">${totalStars} / ${totalMaxStars}</div>
+        <div class="stat-label">Total Stars</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💎</div>
+        <div class="stat-val">${p.treasures_found || 0}</div>
+        <div class="stat-label">Treasures</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📚</div>
+        <div class="stat-val">${p.facts_learned || 0}</div>
+        <div class="stat-label">Facts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🗺️</div>
+        <div class="stat-val">${Object.keys(p.levels_completed || {}).length} / ${LEVELS.length}</div>
+        <div class="stat-label">Completed</div>
+      </div>
+    </div>
+  `;
+  content.innerHTML += statsHTML;
+
+  // World sections
+  WORLDS.forEach(world => {
+    let worldStars = 0;
+    let worldMaxStars = world.levels.length * MAX_STARS;
+    world.levels.forEach(lid => {
+      const lc = p.levels_completed && p.levels_completed[lid];
+      if (lc) worldStars += (lc.stars || 0);
+    });
+
+    const progressPct = Math.round((worldStars / worldMaxStars) * 100);
+
+    let worldHTML = `
+      <div class="world-section">
+        <div class="world-header">
+          <span class="world-icon">${world.icon}</span>
+          <h3>${world.name}</h3>
+          <div class="world-progress">
+            <div class="world-progress-bar"><div class="world-progress-fill" style="width:${progressPct}%"></div></div>
+            <span class="world-progress-text">${worldStars}/${worldMaxStars} ⭐</span>
+          </div>
+        </div>
+        <div class="level-grid">
+    `;
+
+    world.levels.forEach(lid => {
+      const lv = LEVELS.find(l => l.id === lid);
+      if (!lv) return;
+      const completed = p.levels_completed && p.levels_completed[lv.id];
+      const unlocked = isLevelUnlocked(lv.id, p);
+      const stars = completed ? (completed.stars || 0) : 0;
+      const isPerfect = stars >= MAX_STARS;
+
+      let cardClass = 'level-card';
+      if (!unlocked) cardClass += ' locked';
+      else if (isPerfect) cardClass += ' perfect';
+      else if (completed) cardClass += ' completed';
+
+      worldHTML += `
+        <div class="${cardClass}" onclick="${unlocked ? 'startLevel(' + lv.id + ')' : ''}">
+          <span class="level-num">#${lv.id}</span>
+          <div class="level-icon">${lv.icon}</div>
+          <h3>${lv.name}</h3>
+          <p>${lv.desc}</p>
+          <div class="level-stars">${unlocked ? renderStars(stars, MAX_STARS) : ''}</div>
+          ${unlocked && !completed ? '<div class="star-req">Need ' + MAX_STARS + '⭐ to unlock next</div>' : ''}
+          ${completed && stars < MAX_STARS ? '<div class="star-req">Need ' + (MAX_STARS - stars) + ' more ⭐</div>' : ''}
+          ${!unlocked ? '<div class="lock-icon">🔒</div>' : ''}
+          ${isPerfect ? '<div class="lock-icon">👑</div>' : ''}
+        </div>
+      `;
+    });
+
+    worldHTML += '</div></div>';
+    content.innerHTML += worldHTML;
+  });
+}
+
+// ==========================================
+//  GAME ENGINE
+// ==========================================
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let GAME = {};
+
+function resetGame(levelDef) {
+  const canvasH = window.innerHeight;
+  const canvasW = window.innerWidth;
+  canvas.width = canvasW;
+  canvas.height = canvasH;
+
+  const groundY = canvasH - 50;
+
+  // Generate treasures
+  const treasures = [];
+  const spacing = levelDef.width / (levelDef.treasureCount + 1);
+  for (let i = 0; i < levelDef.treasureCount; i++) {
+    const tx = spacing * (i + 1) + (Math.random() * 60 - 30);
+    const plat = levelDef.platforms.find(p => tx >= p.x && tx <= p.x + p.w && !p.ground);
+    const ty = plat ? (groundY - plat.y - plat.h - 20) : (groundY - 50 - Math.random() * 30);
+    const types = ['chest', 'gem', 'scroll', 'star', 'crown'];
+    const icons = ['📦', '💎', '📜', '⭐', '👑'];
+    const ti = Math.floor(Math.random() * types.length);
+    treasures.push({
+      x: tx, y: ty, w: 32, h: 32,
+      type: types[ti], icon: icons[ti],
+      collected: false,
+      bobOffset: Math.random() * Math.PI * 2,
+      glowPhase: Math.random() * Math.PI * 2
+    });
+  }
+
+  // Challenges
+  const challenges = [];
+  if (levelDef.hasChallenges) {
+    const cCount = Math.min(4, Math.floor(levelDef.treasureCount / 2));
+    for (let i = 0; i < cCount; i++) {
+      const cx = spacing * (i * 2 + 1.5);
+      challenges.push({ x: cx, y: groundY - 60, w: 36, h: 36, solved: false, icon: '❓' });
+    }
+  }
+
+  // NPC at end
+  const npc = { x: levelDef.width - 100, y: groundY - 48, w: 40, h: 48, icon: '🧙', talked: false };
+
+  GAME = {
+    level: levelDef, groundY,
+    player: { x: 60, y: groundY - 48, w: 36, h: 44, vx: 0, vy: 0, speed: 4.5, jumpPower: -11.5, onGround: false, facing: 1, state: 'idle', frame: 0, frameTimer: 0 },
+    camera: { x: 0 },
+    treasures, challenges, npc,
+    collectedCount: 0,
+    challengeBonus: 0,
+    totalTreasures: levelDef.treasureCount,
+    gravity: 0.55,
+    particles: [],
+    bgParticles: [],
+    time: 0,
+    paused: false,
+    complete: false,
+  };
+
+  for (let i = 0; i < 25; i++) {
+    GAME.bgParticles.push({
+      x: Math.random() * levelDef.width,
+      y: Math.random() * canvasH * 0.7,
+      size: 2 + Math.random() * 4,
+      speed: 0.2 + Math.random() * 0.5,
+      alpha: 0.15 + Math.random() * 0.25,
+      color: levelDef.bg.sky.startsWith('#1') || levelDef.bg.sky.startsWith('#0') || levelDef.bg.sky.startsWith('#2') ? '#9B59B6' : '#FFD700'
+    });
+  }
+
+  updateHudStars();
+}
+
+function updateHudStars() {
+  const stars = calculateStars(GAME.collectedCount, GAME.totalTreasures, GAME.challengeBonus);
+  const el = document.getElementById('hudStarsDisplay');
+  el.textContent = renderStars(stars, MAX_STARS);
+}
+
+function startLevel(levelId) {
+  const levelDef = LEVELS.find(l => l.id === levelId);
+  if (!levelDef) return;
+  currentLevel = levelId;
+  resetGame(levelDef);
+  document.getElementById('hudLevel').textContent = levelDef.name;
+  document.getElementById('hudGems').textContent = '0';
+  document.getElementById('hudScrolls').textContent = '0 / ' + levelDef.treasureCount;
+  showScreen('gameScreen');
+  gameRunning = true;
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+  if (gameLoopId) cancelAnimationFrame(gameLoopId);
+  gameLoop();
+}
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  if (GAME.player) GAME.groundY = canvas.height - 50;
+}
+
+function exitGame() {
+  gameRunning = false;
+  if (gameLoopId) cancelAnimationFrame(gameLoopId);
+  window.removeEventListener('resize', resizeCanvas);
+  loadDashboard();
+}
+
+// ==========================================
+//  INPUT
+// ==========================================
+const keys = {};
+document.addEventListener('keydown', e => { keys[e.key] = true; if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) e.preventDefault(); });
+document.addEventListener('keyup', e => { keys[e.key] = false; });
+
+const mobileKeys = {};
+document.querySelectorAll('.dpad-btn').forEach(btn => {
+  const dir = btn.dataset.dir;
+  const start = () => { mobileKeys[dir] = true; };
+  const end = () => { mobileKeys[dir] = false; };
+  btn.addEventListener('touchstart', e => { e.preventDefault(); start(); });
+  btn.addEventListener('touchend', e => { e.preventDefault(); end(); });
+  btn.addEventListener('mousedown', start);
+  btn.addEventListener('mouseup', end);
+  btn.addEventListener('mouseleave', end);
+});
+
+document.getElementById('btnAction').addEventListener('touchstart', e => { e.preventDefault(); mobileKeys.action = true; });
+document.getElementById('btnAction').addEventListener('touchend', e => { e.preventDefault(); mobileKeys.action = false; });
+document.getElementById('btnAction').addEventListener('mousedown', () => { mobileKeys.action = true; });
+document.getElementById('btnAction').addEventListener('mouseup', () => { mobileKeys.action = false; });
+
+function isKeyDown(action) {
+  switch(action) {
+    case 'left': return keys['ArrowLeft'] || keys['a'] || keys['A'] || mobileKeys.left;
+    case 'right': return keys['ArrowRight'] || keys['d'] || keys['D'] || mobileKeys.right;
+    case 'up': return keys['ArrowUp'] || keys['w'] || keys['W'] || keys[' '] || mobileKeys.up;
+    case 'down': return keys['ArrowDown'] || keys['s'] || keys['S'] || mobileKeys.down;
+    case 'action': return keys['e'] || keys['E'] || keys['Enter'] || mobileKeys.action;
+  }
+  return false;
+}
+
+// ==========================================
+//  GAME UPDATE
+// ==========================================
+function updateGame() {
+  if (GAME.paused || GAME.complete) return;
+
+  const p = GAME.player;
+  const g = GAME;
+  g.time++;
+
+  let moveX = 0;
+  if (isKeyDown('left')) { moveX = -1; p.facing = -1; }
+  if (isKeyDown('right')) { moveX = 1; p.facing = 1; }
+  p.vx = moveX * p.speed;
+
+  if (isKeyDown('up') && p.onGround) { p.vy = p.jumpPower; p.onGround = false; }
+
+  p.vy += g.gravity;
+  p.x += p.vx;
+  if (p.x < 0) p.x = 0;
+  if (p.x > g.level.width - p.w) p.x = g.level.width - p.w;
+  p.y += p.vy;
+
+  // Platform collision
+  p.onGround = false;
+  for (const plat of g.level.platforms) {
+    const platTop = g.groundY - plat.y - plat.h;
+    const platBottom = platTop + plat.h;
+    if (p.x + p.w > plat.x && p.x < plat.x + plat.w) {
+      if (p.vy >= 0 && p.y + p.h >= platTop && p.y + p.h <= platBottom + 12) {
+        p.y = platTop - p.h;
+        p.vy = 0;
+        p.onGround = true;
+      }
+    }
+  }
+
+  if (p.y + p.h > g.groundY) { p.y = g.groundY - p.h; p.vy = 0; p.onGround = true; }
+
+  // Animation
+  if (!p.onGround) { p.state = 'jump'; }
+  else if (Math.abs(p.vx) > 0.5) { p.state = 'walk'; p.frameTimer++; if (p.frameTimer > 8) { p.frameTimer = 0; p.frame = (p.frame + 1) % 4; } }
+  else { p.state = 'idle'; p.frameTimer++; if (p.frameTimer > 30) { p.frameTimer = 0; p.frame = (p.frame + 1) % 2; } }
+
+  // Camera
+  const targetCamX = p.x - canvas.width / 2 + p.w / 2;
+  g.camera.x += (targetCamX - g.camera.x) * 0.1;
+  g.camera.x = Math.max(0, Math.min(g.level.width - canvas.width, g.camera.x));
+
+  // Treasure collection
+  for (const t of g.treasures) {
+    if (t.collected) continue;
+    if (rectCollide(p, t)) {
+      t.collected = true;
+      g.collectedCount++;
+      document.getElementById('hudGems').textContent = g.collectedCount;
+      document.getElementById('hudScrolls').textContent = g.collectedCount + ' / ' + g.totalTreasures;
+      spawnParticles(t.x - g.camera.x + 16, t.y + 16, 15);
+      updateHudStars();
+      GAME.paused = true;
+      setTimeout(() => showTreasureReward(), 300);
+    }
+  }
+
+  // Challenge blocks
+  for (const c of g.challenges) {
+    if (c.solved) continue;
+    if (rectCollide(p, c)) {
+      c.solved = true;
+      GAME.paused = true;
+      setTimeout(() => showChallengePopup(), 300);
+    }
+  }
+
+  // NPC
+  if (!g.npc.talked && rectCollide(p, g.npc)) {
+    g.npc.talked = true;
+    if (g.collectedCount >= g.totalTreasures) {
+      completeLevel();
+    } else {
+      GAME.paused = true;
+      showTreasurePopup('🧙', 'Wise Wizard', 'Keep exploring! Find all ' + g.totalTreasures + ' treasures. You have ' + g.collectedCount + ' so far! Get all of them for 5 stars!', 'knowledge');
+    }
+  }
+
+  // Particles
+  g.particles = g.particles.filter(pt => { pt.x += pt.vx; pt.y += pt.vy; pt.vy += 0.1; pt.life--; return pt.life > 0; });
+  for (const bp of g.bgParticles) { bp.x += bp.speed; if (bp.x > g.level.width + 20) bp.x = -20; }
+}
+
+function rectCollide(a, b) { return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y; }
+
+function spawnParticles(x, y, count) {
+  const colors = ['#FFD700', '#FF6B35', '#FF69B4', '#00BFFF', '#7CFC00', '#FF4500'];
+  for (let i = 0; i < count; i++) {
+    GAME.particles.push({ x, y, vx: (Math.random() - 0.5) * 6, vy: (Math.random() - 0.5) * 6 - 3, size: 3 + Math.random() * 5, color: colors[Math.floor(Math.random() * colors.length)], life: 30 + Math.random() * 30 });
+  }
+  createSparkles(x, y);
+}
+
+function createSparkles(x, y) {
+  const container = document.getElementById('sparkleContainer');
+  const colors = ['#FFD700', '#FF6B35', '#FF69B4', '#7CFC00', '#00BFFF'];
+  for (let i = 0; i < 10; i++) {
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    s.style.left = (x + Math.random() * 60 - 30) + 'px';
+    s.style.top = (y + Math.random() * 60 - 30) + 'px';
+    s.style.background = colors[Math.floor(Math.random() * colors.length)];
+    s.style.animationDuration = (0.6 + Math.random() * 0.8) + 's';
+    container.appendChild(s);
+    setTimeout(() => s.remove(), 1500);
+  }
+}
+
+// ==========================================
+//  RENDER
+// ==========================================
+function renderGame() {
+  const g = GAME;
+  const camX = g.camera.x;
+  const W = canvas.width;
+  const H = canvas.height;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Sky
+  const skyGrad = ctx.createLinearGradient(0, 0, 0, H);
+  skyGrad.addColorStop(0, g.level.bg.sky);
+  skyGrad.addColorStop(1, lightenColor(g.level.bg.sky, 20));
+  ctx.fillStyle = skyGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // BG particles
+  for (const bp of g.bgParticles) {
+    const sx = bp.x - camX * 0.3;
+    if (sx < -20 || sx > W + 20) continue;
+    ctx.globalAlpha = bp.alpha;
+    ctx.fillStyle = bp.color;
+    ctx.beginPath();
+    ctx.arc(sx, bp.y + Math.sin(g.time * 0.02 + bp.x) * 10, bp.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  drawDecorations(camX);
+
+  // Platforms
+  for (const plat of g.level.platforms) {
+    const px = plat.x - camX;
+    const py = g.groundY - plat.y - plat.h;
+    if (px + plat.w < 0 || px > W) continue;
+
+    if (plat.ground) {
+      const groundGrad = ctx.createLinearGradient(0, py, 0, py + plat.h + 30);
+      groundGrad.addColorStop(0, g.level.bg.ground);
+      groundGrad.addColorStop(1, g.level.bg.accent);
+      ctx.fillStyle = groundGrad;
+      ctx.fillRect(px, py, plat.w, H - py);
+      ctx.fillStyle = g.level.bg.accent;
+      for (let gx = Math.max(0, px); gx < Math.min(W, px + plat.w); gx += 8) {
+        const gh = 4 + Math.sin(gx * 0.5 + g.time * 0.05) * 3;
+        ctx.fillRect(gx, py - gh, 3, gh);
+      }
+    } else {
+      ctx.fillStyle = g.level.bg.ground;
+      roundRect(ctx, px, py, plat.w, plat.h, 6);
+      ctx.fill();
+      ctx.fillStyle = lightenColor(g.level.bg.ground, 20);
+      ctx.fillRect(px + 4, py, plat.w - 8, 4);
+      ctx.fillStyle = 'rgba(0,0,0,0.15)';
+      ctx.fillRect(px + 4, py + plat.h - 2, plat.w - 8, 4);
+    }
+  }
+
+  // Challenge blocks
+  for (const c of g.challenges) {
+    if (c.solved) continue;
+    const cx = c.x - camX;
+    if (cx + c.w < 0 || cx > W) continue;
+    const bob = Math.sin(g.time * 0.06 + c.x) * 4;
+    ctx.shadowColor = '#FFD700';
+    ctx.shadowBlur = 15 + Math.sin(g.time * 0.08) * 8;
+    ctx.fillStyle = '#FFB347';
+    roundRect(ctx, cx, c.y + bob, c.w, c.h, 8);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.font = '20px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(c.icon, cx + c.w/2, c.y + bob + c.h/2 + 6);
+  }
+
+  // Treasures
+  for (const t of g.treasures) {
+    if (t.collected) continue;
+    const tx = t.x - camX;
+    if (tx + t.w < 0 || tx > W) continue;
+    const bob = Math.sin(g.time * 0.05 + t.bobOffset) * 6;
+    const glow = 0.5 + Math.sin(g.time * 0.08 + t.glowPhase) * 0.3;
+    ctx.globalAlpha = glow * 0.4;
+    const glowGrad = ctx.createRadialGradient(tx + t.w/2, t.y + bob + t.h/2, 0, tx + t.w/2, t.y + bob + t.h/2, 30);
+    glowGrad.addColorStop(0, '#FFD700');
+    glowGrad.addColorStop(1, 'transparent');
+    ctx.fillStyle = glowGrad;
+    ctx.fillRect(tx - 15, t.y + bob - 15 + t.h/2, t.w + 30, t.h + 30);
+    ctx.globalAlpha = 1;
+    ctx.font = '28px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(t.icon, tx + t.w/2, t.y + bob + t.h - 2);
+  }
+
+  // NPC
+  const npc = g.npc;
+  const nx = npc.x - camX;
+  if (nx > -60 && nx < W + 60) {
+    const npcBob = Math.sin(g.time * 0.03) * 3;
+    ctx.font = '36px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(npc.icon, nx + npc.w/2, npc.y + npcBob + npc.h - 4);
+    if (!npc.talked) {
+      ctx.font = 'bold 11px Nunito, sans-serif';
+      ctx.fillStyle = '#fff';
+      ctx.fillText('Come here!', nx + npc.w/2, npc.y + npcBob - 12);
+    }
+  }
+
+  drawPlayer(g.player, camX);
+
+  // Particles
+  for (const pt of g.particles) {
+    ctx.globalAlpha = pt.life / 60;
+    ctx.fillStyle = pt.color;
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, pt.size * (pt.life / 60), 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  drawMinimap();
+}
+
+function drawPlayer(p, camX) {
+  const px = p.x - camX;
+  const py = p.y;
+  const g = GAME;
+
+  ctx.save();
+  ctx.translate(px + p.w / 2, py + p.h);
+  ctx.scale(p.facing, 1);
+
+  ctx.fillStyle = 'rgba(0,0,0,0.15)';
+  ctx.beginPath();
+  ctx.ellipse(0, 0, p.w/2, 5, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  let bodyOffsetY = 0, legAngle = 0;
+  if (p.state === 'walk') { bodyOffsetY = Math.sin(p.frame * Math.PI / 2) * 3; legAngle = Math.sin(p.frame * Math.PI / 2) * 0.4; }
+  else if (p.state === 'jump') { bodyOffsetY = -4; }
+  else { bodyOffsetY = Math.sin(g.time * 0.06) * 1.5; }
+
+  // Legs
+  ctx.strokeStyle = '#2196F3'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+  ctx.save(); ctx.translate(-6, -6); ctx.rotate(legAngle); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, 12); ctx.stroke(); ctx.restore();
+  ctx.save(); ctx.translate(6, -6); ctx.rotate(-legAngle); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, 12); ctx.stroke(); ctx.restore();
+
+  // Shoes
+  ctx.fillStyle = '#F44336'; ctx.fillRect(-10, -2, 7, 4); ctx.fillRect(3, -2, 7, 4);
+
+  // Body
+  ctx.fillStyle = '#FF6B35'; roundRect(ctx, -10, -28 + bodyOffsetY, 20, 22, 5); ctx.fill();
+  ctx.fillStyle = '#8B4513'; ctx.fillRect(-10, -12 + bodyOffsetY, 20, 3);
+
+  // Arms
+  ctx.strokeStyle = '#FFB347'; ctx.lineWidth = 4;
+  let armAngle = p.state === 'walk' ? Math.sin(p.frame * Math.PI / 2) * 0.5 : (p.state === 'jump' ? -0.8 : Math.sin(g.time * 0.04) * 0.15);
+  ctx.save(); ctx.translate(-10, -24 + bodyOffsetY); ctx.rotate(armAngle); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-6, 14); ctx.stroke(); ctx.restore();
+  ctx.save(); ctx.translate(10, -24 + bodyOffsetY); ctx.rotate(-armAngle); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(6, 14); ctx.stroke(); ctx.restore();
+
+  // Head
+  ctx.fillStyle = '#FFCC80'; ctx.beginPath(); ctx.arc(0, -36 + bodyOffsetY, 12, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#5D4037'; ctx.beginPath(); ctx.arc(0, -40 + bodyOffsetY, 12, Math.PI, 0); ctx.fill();
+
+  // Hat
+  ctx.fillStyle = '#8B4513'; ctx.fillRect(-14, -48 + bodyOffsetY, 28, 5);
+  ctx.fillStyle = '#A0522D'; roundRect(ctx, -8, -55 + bodyOffsetY, 16, 10, 4); ctx.fill();
+
+  // Eyes
+  ctx.fillStyle = '#333';
+  const eyeBlink = (g.time % 180 < 6) ? 0.5 : 2.5;
+  ctx.beginPath(); ctx.ellipse(-4, -36 + bodyOffsetY, 2, eyeBlink, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(4, -36 + bodyOffsetY, 2, eyeBlink, 0, 0, Math.PI * 2); ctx.fill();
+
+  // Mouth
+  ctx.strokeStyle = '#333'; ctx.lineWidth = 1.5; ctx.beginPath();
+  ctx.arc(0, -33 + bodyOffsetY, 4, 0, Math.PI * (p.state === 'jump' ? 0.5 : 0.3)); ctx.stroke();
+
+  // Blush
+  ctx.fillStyle = 'rgba(255,105,180,0.3)';
+  ctx.beginPath(); ctx.ellipse(-8, -33 + bodyOffsetY, 3, 2, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(8, -33 + bodyOffsetY, 3, 2, 0, 0, Math.PI * 2); ctx.fill();
+
+  ctx.restore();
+}
+
+function drawDecorations(camX) {
+  const g = GAME;
+  const W = canvas.width;
+
+  for (const dec of g.level.decorations) {
+    const dx = dec.x - camX;
+    if (dx < -100 || dx > W + 100) continue;
+    const baseY = g.groundY;
+
+    switch(dec.type) {
+      case 'tree':
+        ctx.fillStyle = '#8B4513'; ctx.fillRect(dx - 6, baseY - 70, 12, 70);
+        ctx.fillStyle = '#228B22'; ctx.beginPath(); ctx.arc(dx, baseY - 80, 30, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#2E8B57'; ctx.beginPath(); ctx.arc(dx - 10, baseY - 70, 20, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(dx + 12, baseY - 72, 22, 0, Math.PI * 2); ctx.fill();
+        break;
+      case 'flower':
+        const swayF = Math.sin(g.time * 0.03 + dec.x) * 3;
+        ctx.strokeStyle = '#228B22'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(dx, baseY); ctx.quadraticCurveTo(dx + swayF, baseY - 20, dx + swayF, baseY - 30); ctx.stroke();
+        const fColors = ['#FF69B4', '#FF6347', '#FFD700', '#FF4500', '#DA70D6'];
+        ctx.fillStyle = fColors[Math.floor(dec.x) % fColors.length]; ctx.beginPath(); ctx.arc(dx + swayF, baseY - 34, 8, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#FFD700'; ctx.beginPath(); ctx.arc(dx + swayF, baseY - 34, 4, 0, Math.PI * 2); ctx.fill();
+        break;
+      case 'bush':
+        ctx.fillStyle = '#2E8B57'; ctx.beginPath(); ctx.arc(dx, baseY - 12, 18, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#3CB371'; ctx.beginPath(); ctx.arc(dx + 10, baseY - 10, 14, 0, Math.PI * 2); ctx.fill();
+        break;
+      case 'crystal':
+        const cg = 0.5 + Math.sin(g.time * 0.05 + dec.x) * 0.3;
+        ctx.globalAlpha = cg;
+        ctx.fillStyle = '#9B59B6'; ctx.beginPath(); ctx.moveTo(dx, baseY); ctx.lineTo(dx - 10, baseY - 30); ctx.lineTo(dx, baseY - 50); ctx.lineTo(dx + 10, baseY - 30); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#BB86FC'; ctx.beginPath(); ctx.moveTo(dx + 5, baseY); ctx.lineTo(dx, baseY - 35); ctx.lineTo(dx + 15, baseY - 25); ctx.closePath(); ctx.fill();
+        ctx.globalAlpha = 1;
+        break;
+      case 'stalactite':
+        ctx.fillStyle = '#555'; ctx.beginPath(); ctx.moveTo(dx - 8, 0); ctx.lineTo(dx, 40 + Math.sin(dec.x) * 10); ctx.lineTo(dx + 8, 0); ctx.closePath(); ctx.fill();
+        break;
+      case 'cloud_dec':
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        const cloudX = dx + Math.sin(g.time * 0.01 + dec.x) * 20;
+        const cy = dec.y || 100;
+        ctx.beginPath(); ctx.arc(cloudX, cy, 25, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(cloudX + 20, cy - 5, 20, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(cloudX - 18, cy + 3, 18, 0, Math.PI * 2); ctx.fill();
+        break;
+      case 'volcano':
+        ctx.fillStyle = '#8B4513'; ctx.beginPath(); ctx.moveTo(dx - 40, baseY); ctx.lineTo(dx - 10, baseY - 80); ctx.lineTo(dx + 10, baseY - 80); ctx.lineTo(dx + 40, baseY); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = 'rgba(255,69,0,' + (0.4 + Math.sin(g.time * 0.06) * 0.3) + ')';
+        ctx.beginPath(); ctx.arc(dx, baseY - 80, 12, 0, Math.PI * 2); ctx.fill();
+        break;
+      case 'bone':
+        ctx.fillStyle = '#F5F5DC'; ctx.fillRect(dx - 15, baseY - 8, 30, 6);
+        ctx.beginPath(); ctx.arc(dx - 15, baseY - 5, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(dx + 15, baseY - 5, 5, 0, Math.PI * 2); ctx.fill();
+        break;
+      case 'palm':
+        ctx.fillStyle = '#DEB887'; ctx.fillRect(dx - 5, baseY - 60, 10, 60);
+        const ps = Math.sin(g.time * 0.02 + dec.x) * 5;
+        ctx.fillStyle = '#228B22';
+        for (let li = 0; li < 5; li++) {
+          const angle = (li / 5) * Math.PI * 2;
+          ctx.save(); ctx.translate(dx + ps, baseY - 62); ctx.rotate(angle);
+          ctx.beginPath(); ctx.ellipse(20, 0, 25, 6, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        }
+        break;
+    }
+  }
+}
+
+function drawMinimap() {
+  const g = GAME;
+  const mmW = 100;
+  const mmH = 16;
+  const mmX = canvas.width - mmW - 12;
+  const mmY = 64;
+  const scale = mmW / g.level.width;
+
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  roundRect(ctx, mmX - 3, mmY - 3, mmW + 6, mmH + 6, 4);
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  ctx.fillRect(mmX, mmY, mmW, mmH);
+
+  for (const t of g.treasures) {
+    ctx.fillStyle = t.collected ? 'rgba(100,100,100,0.3)' : '#FFD700';
+    ctx.fillRect(mmX + t.x * scale - 1, mmY + 5, 2, 3);
+  }
+
+  ctx.fillStyle = '#FF6B35';
+  ctx.fillRect(mmX + g.player.x * scale - 2, mmY + 3, 4, 6);
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(mmX + g.camera.x * scale, mmY, canvas.width * scale, mmH);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function lightenColor(hex, amount) {
+  if (!hex || hex.length < 7) return hex;
+  let r = parseInt(hex.slice(1,3), 16);
+  let g = parseInt(hex.slice(3,5), 16);
+  let b = parseInt(hex.slice(5,7), 16);
+  r = Math.min(255, r + amount); g = Math.min(255, g + amount); b = Math.min(255, b + amount);
+  return '#' + [r,g,b].map(c => c.toString(16).padStart(2,'0')).join('');
+}
+
+// ==========================================
+//  GAME LOOP
+// ==========================================
+function gameLoop() {
+  if (!gameRunning) return;
+  updateGame();
+  renderGame();
+  gameLoopId = requestAnimationFrame(gameLoop);
+}
+
+// ==========================================
+//  EDUCATIONAL POPUPS
+// ==========================================
+function showTreasureReward() {
+  const categories = ['knowledge', 'school', 'life'];
+  const cat = categories[Math.floor(Math.random() * categories.length)];
+  const pool = EDUCATION[cat];
+  if (educationUsedIndices[cat].length >= pool.length) educationUsedIndices[cat] = [];
+  let idx;
+  do { idx = Math.floor(Math.random() * pool.length); } while (educationUsedIndices[cat].includes(idx));
+  educationUsedIndices[cat].push(idx);
+  const content = pool[idx];
+  const typeLabels = { knowledge: 'Fun Knowledge', school: 'School Learning', life: 'Life Skills' };
+  showTreasurePopup(content.icon, content.title, content.text, cat, typeLabels[cat]);
+}
+
+function showTreasurePopup(icon, title, text, cat, typeLabel) {
+  document.getElementById('treasureIcon').textContent = icon;
+  document.getElementById('treasureTitle').textContent = title;
+  document.getElementById('treasureText').textContent = text;
+  const typeEl = document.getElementById('rewardType');
+  typeEl.textContent = typeLabel || 'Discovery';
+  typeEl.className = 'reward-type ' + (cat || 'knowledge');
+  document.getElementById('treasureOverlay').classList.add('show');
+}
+
+function closeTreasure() {
+  document.getElementById('treasureOverlay').classList.remove('show');
+  GAME.paused = false;
+  GAME.npc.talked = false;
+  if (GAME.collectedCount >= GAME.totalTreasures) {
+    setTimeout(() => completeLevel(), 500);
+  }
+}
+
+function showChallengePopup() {
+  if (challengeUsedIndices.length >= CHALLENGES.length) challengeUsedIndices = [];
+  let idx;
+  do { idx = Math.floor(Math.random() * CHALLENGES.length); } while (challengeUsedIndices.includes(idx));
+  challengeUsedIndices.push(idx);
+  const ch = CHALLENGES[idx];
+  document.getElementById('challengeTitle').textContent = 'Mini Challenge!';
+  document.getElementById('challengeText').textContent = ch.question;
+  document.getElementById('challengeContinue').style.display = 'none';
+  const grid = document.getElementById('challengeOptions');
+  grid.innerHTML = '';
+  ch.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'challenge-option';
+    btn.textContent = opt;
+    btn.onclick = () => {
+      const allBtns = grid.querySelectorAll('.challenge-option');
+      if (i === ch.correct) {
+        btn.classList.add('correct');
+        document.getElementById('challengeTitle').textContent = '🎉 Correct!';
+        document.getElementById('challengeText').textContent = 'Amazing job! Bonus treasure earned!';
+        GAME.collectedCount++;
+        GAME.challengeBonus++;
+        document.getElementById('hudGems').textContent = GAME.collectedCount;
+        updateHudStars();
+        spawnParticles(window.innerWidth / 2, window.innerHeight / 2, 20);
+      } else {
+        btn.classList.add('wrong');
+        allBtns[ch.correct].classList.add('correct');
+        document.getElementById('challengeTitle').textContent = 'Nice Try!';
+        document.getElementById('challengeText').textContent = 'The answer was: ' + ch.options[ch.correct] + '. Keep learning!';
+      }
+      allBtns.forEach(b => b.style.pointerEvents = 'none');
+      document.getElementById('challengeContinue').style.display = 'inline-block';
+    };
+    grid.appendChild(btn);
+  });
+  document.getElementById('challengeOverlay').classList.add('show');
+}
+
+function closeChallenge() {
+  document.getElementById('challengeOverlay').classList.remove('show');
+  GAME.paused = false;
+}
+
+// ==========================================
+//  LEVEL COMPLETE
+// ==========================================
+function completeLevel() {
+  GAME.complete = true;
+  GAME.paused = true;
+
+  const stars = calculateStars(GAME.collectedCount, GAME.totalTreasures, GAME.challengeBonus);
+
+  document.getElementById('completeStars').textContent = renderStars(stars, MAX_STARS);
+
+  let msg = `You found ${GAME.collectedCount} treasures and earned ${stars} stars!`;
+  if (stars < MAX_STARS) {
+    msg += ` Get all ${GAME.totalTreasures} treasures for ${MAX_STARS} stars!`;
+  }
+  document.getElementById('completeMsg').textContent = msg;
+
+  // Unlock message
+  const unlockEl = document.getElementById('unlockMsg');
+  if (stars >= STARS_TO_UNLOCK && currentLevel < LEVELS.length) {
+    unlockEl.textContent = '🔓 Level ' + (currentLevel + 1) + ' Unlocked!';
+    unlockEl.style.display = 'inline-block';
+  } else if (stars < STARS_TO_UNLOCK) {
+    unlockEl.textContent = '🔒 Need ' + STARS_TO_UNLOCK + ' stars to unlock next level. Try again for more stars!';
+    unlockEl.style.display = 'inline-block';
+    unlockEl.style.color = '#FFD700';
+    unlockEl.style.background = 'rgba(255,215,0,0.1)';
+  } else {
+    unlockEl.style.display = 'none';
+  }
+
+  // Save progress
+  const p = currentUser.progress;
+  p.treasures_found = (p.treasures_found || 0) + GAME.collectedCount;
+  p.facts_learned = (p.facts_learned || 0) + GAME.collectedCount;
+
+  if (!p.levels_completed) p.levels_completed = {};
+  const existing = p.levels_completed[currentLevel];
+  if (!existing || existing.stars < stars) {
+    p.levels_completed[currentLevel] = { stars, treasures: GAME.collectedCount };
+  }
+
+  // Recalculate total stars
+  let totalStars = 0;
+  Object.values(p.levels_completed).forEach(lc => { totalStars += (lc.stars || 0); });
+  p.stars = totalStars;
+
+  // Unlock next level only if 5 stars achieved
+  if (stars >= STARS_TO_UNLOCK && currentLevel < LEVELS.length) {
+    p.level = Math.max(p.level || 1, currentLevel + 1);
+  }
+
+  DB.saveProgress(currentUser.id, p);
+  DB.setSession(currentUser);
+
+  document.getElementById('levelCompleteOverlay').classList.add('show');
+
+  for (let i = 0; i < 6; i++) {
+    setTimeout(() => {
+      createSparkles(Math.random() * window.innerWidth, Math.random() * window.innerHeight * 0.5);
+    }, i * 250);
+  }
+}
+
+function exitToMenu() {
+  document.getElementById('levelCompleteOverlay').classList.remove('show');
+  gameRunning = false;
+  if (gameLoopId) cancelAnimationFrame(gameLoopId);
+  loadDashboard();
+}
+
+function replayLevel() {
+  document.getElementById('levelCompleteOverlay').classList.remove('show');
+  gameRunning = false;
+  if (gameLoopId) cancelAnimationFrame(gameLoopId);
+  startLevel(currentLevel);
+}
+
+// ==========================================
+//  INIT
+// ==========================================
+function init() {
+  const session = DB.getSession();
+  if (session) {
+    const users = DB.getUsers();
+    const user = users.find(u => u.id === session.id);
+    if (user) { currentUser = user; loadDashboard(); return; }
+  }
+  showScreen('loginScreen');
+}
+
+window.addEventListener('DOMContentLoaded', init);
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+/*
+  SQL SCHEMA:
+  CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) UNIQUE, password_hash VARCHAR(255), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+  CREATE TABLE progress (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT, level INT DEFAULT 1, treasures_found INT DEFAULT 0, facts_learned INT DEFAULT 0, stars INT DEFAULT 0, levels_completed JSON DEFAULT '{}', FOREIGN KEY (user_id) REFERENCES users(id));
+  CREATE TABLE educational_content (id INT AUTO_INCREMENT PRIMARY KEY, category ENUM('knowledge','school','life'), icon VARCHAR(10), title VARCHAR(100), text TEXT);
+  CREATE TABLE challenges (id INT AUTO_INCREMENT PRIMARY KEY, question VARCHAR(255), option_a VARCHAR(100), option_b VARCHAR(100), option_c VARCHAR(100), option_d VARCHAR(100), correct_option TINYINT);
+*/
+</script>
+</body>
+</html>
